@@ -14,10 +14,6 @@ public class PersonRowMapper implements RowMapper<Person> {
         String columnLLabelName = "name";
         String columnLLabelAge = "age";
 
-        Person person = new Person();
-        person.setId(rs.getInt(columnLLabelId));
-        person.setName(rs.getString(columnLLabelName));
-        person.setAge(rs.getInt(columnLLabelAge));
-        return person;
+        return new Person(rs.getInt(columnLLabelId), rs.getString(columnLLabelName),rs.getInt(columnLLabelAge));
     }
 }
