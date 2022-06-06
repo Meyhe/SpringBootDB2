@@ -9,9 +9,12 @@ import java.util.List;
 
 @Service
 public class PersonService {
+    private final PersonDAO personDAO;
 
     @Autowired
-    private PersonDAO personDAO;
+    public PersonService(PersonDAO personDAO) {
+        this.personDAO = personDAO;
+    }
 
     public Person getPerson(int id){
         return personDAO.getPerson(id);
@@ -21,15 +24,15 @@ public class PersonService {
         return personDAO.getPeople();
     }
 
-    public void addPerson(Person person){
-        personDAO.addPerson(person);
+    public Person addPerson(Person person){
+        return personDAO.addPerson(person);
     }
 
-    public void updatePerson(int id, Person person){
-        personDAO.updatePerson(id, person);
+    public Person updatePerson(int id, Person person){
+        return personDAO.updatePerson(id, person);
     }
 
-    public void deletePerson(int id){
-        personDAO.deletePerson(id);
+    public Person deletePerson(int id){
+        return personDAO.deletePerson(id);
     }
 }
