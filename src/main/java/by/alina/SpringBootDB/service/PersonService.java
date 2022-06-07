@@ -28,11 +28,11 @@ public class PersonService {
         return personDAO.addPerson(person);
     }
 
-    public Person updatePerson(int id, Person person){
+    public int updatePerson(int id, Person person){
         return personDAO.updatePerson(id, person);
     }
 
-    public Person deletePerson(int id){
+    public int deletePerson(int id){
         return personDAO.deletePerson(id);
     }
 }

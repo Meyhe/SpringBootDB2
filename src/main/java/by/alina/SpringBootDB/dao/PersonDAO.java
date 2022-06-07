@@ -1,6 +1,5 @@
 package by.alina.SpringBootDB.dao;
 
-import by.alina.SpringBootDB.exceptions.PersonNotFoundException;
 import by.alina.SpringBootDB.mapper.PersonRowMapper;
 import by.alina.SpringBootDB.model.Person;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,14 +37,11 @@ public class PersonDAO {
         return person;
     }
 
-    public Person updatePerson(int id, Person person){
-        jdbcTemplate.update("UPDATE Person SET name=?, age=? WHERE id=?", person.getName(), person.getAge(), id);
-        return person;
+    public int updatePerson(int id, Person person){
+        return jdbcTemplate.update("UPDATE Person SET name=?, age=? WHERE id=?", person.getName(), person.getAge(), id);
     }
 
-    public Person deletePerson(int id){
-        Person person = getPerson(id);
-        jdbcTemplate.update("DELETE FROM Person WHERE id = ?", id);
-        return person;
+    public int deletePerson(int id){
+        return jdbcTemplate.update("DELETE FROM Person WHERE id = ?", id);
     }
 }
