@@ -51,7 +51,7 @@ public class ItemController {
     public ResponseEntity<Person> getPerson(@PathVariable Long id){
         Optional<Person> person = personRepository.findById(id);
 
-        if (!person.isPresent()){
+        if (person.isEmpty()){
             throw new MyEntityNotFoundException(id);
         } else {
             return ResponseEntity.ok().body(person.get());
@@ -65,11 +65,11 @@ public class ItemController {
         return ResponseEntity.status(HttpStatus.CREATED).body(newPerson);
     }
 
-    @PutMapping(value = "/update/{id}")
+    @PutMapping(value = "/{id}")
     public ResponseEntity<Person> updatePerson(@RequestBody Person person, @PathVariable Long id){
         Optional<Person> updatePer = personRepository.findById(id);
 
-        if (!updatePer.isPresent()){
+        if (updatePer.isEmpty()){
             throw new MyEntityNotFoundException(id);
         } else {
             Person p = updatePer.get();
@@ -83,7 +83,7 @@ public class ItemController {
     public ResponseEntity<Person> deletePerson(@PathVariable Long id) {
         Optional<Person> person = personRepository.findById(id);
 
-        if(!person.isPresent()){
+        if(person.isEmpty()){
             throw  new MyEntityNotFoundException(id);
         } else {
             personRepository.deleteById(id);
