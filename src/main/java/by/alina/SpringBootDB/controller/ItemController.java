@@ -1,61 +1,94 @@
 package by.alina.SpringBootDB.controller;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
+import by.alina.SpringBootDB.exception.MyEntityNotFoundException;
 import by.alina.SpringBootDB.model.Person;
-import by.alina.SpringBootDB.service.PersonService;
+import by.alina.SpringBootDB.repository.PersonRepository;
+import org.apache.tomcat.jni.Library;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/people")
 public class ItemController {
 
-    private final PersonService personService;
+    private final PersonRepository personRepository;
 
     @Autowired
-    public ItemController(PersonService personService){
-        this.personService = personService;
+    public ItemController(PersonRepository personRepository){
+        this.personRepository = personRepository;
     }
 
-    @GetMapping("/people")
-    public ResponseEntity<List<Person>> getPeople(){
-       final List<Person> people = personService.getPeople();
-        return (!people.isEmpty() && people != null)
-                ? new ResponseEntity<>(people,HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    @GetMapping
+    public ResponseEntity<List<Person>> getPeople() {
+        List<Person> personList = (List<Person>) personRepository.findAll();
+
+        for (Person person : personList){
+            Long personId = person.getId();
+
+            person.add(linkTo(methodOn(ItemController.class)
+                    .getPerson(personId))
+                    .withRel("get_person")
+                    .withType("GET"));
+
+            person.add(linkTo(methodOn(ItemController.class)
+                    .deletePerson(personId))
+                    .withRel("delete_person")
+                    .withType("DELETE"));
+        }
+        return ResponseEntity.ok().body(personList);
     }
 
-    @GetMapping("/people/{id}")
-    public ResponseEntity<Person> getPerson(@PathVariable int id){
-        final Person person = personService.getPerson(id);
-            return person != null
-                    ? new ResponseEntity<>(person, HttpStatus.OK)
-                    : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<Person> getPerson(@PathVariable Long id){
+        Optional<Person> person = personRepository.findById(id);
+
+        if (!person.isPresent()){
+            throw new MyEntityNotFoundException(id);
+        } else {
+            return ResponseEntity.ok().body(person.get());
+        }
     }
 
-    @DeleteMapping("/people/{id}")
-    public ResponseEntity<?> deletePerson(@PathVariable int id){
-        final Person person = personService.getPerson(id);
-        final int numDeletedRows = personService.deletePerson(id);
-        return numDeletedRows != 0
-                ? new ResponseEntity<>(person, HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
+    @PostMapping
+    public ResponseEntity<Person> createPerson(@RequestBody Person person){
+        Person newPerson = personRepository.save(person);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(newPerson);
     }
 
-    @PostMapping("/people")
-    public ResponseEntity<?> addPerson(@RequestBody Person person){
-        personService.addPerson(person);
-        return new ResponseEntity<>(person, HttpStatus.CREATED);
+    @PutMapping(value = "/update/{id}")
+    public ResponseEntity<Person> updatePerson(@RequestBody Person person, @PathVariable Long id){
+        Optional<Person> updatePer = personRepository.findById(id);
+
+        if (!updatePer.isPresent()){
+            throw new MyEntityNotFoundException(id);
+        } else {
+            Person p = updatePer.get();
+            p.setName(person.getName());
+            p.setAge(person.getAge());
+            return ResponseEntity.ok().body(personRepository.save(p));
+        }
     }
 
-    @PutMapping("/people/{id}")
-    public ResponseEntity<?> updatePerson(@PathVariable int id, @RequestBody Person person){
-        final int numUpdatedRows = personService.updatePerson(id, person);
-        return numUpdatedRows != 0
-                ? new ResponseEntity<>(person, HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<Person> deletePerson(@PathVariable Long id) {
+        Optional<Person> person = personRepository.findById(id);
+
+        if(!person.isPresent()){
+            throw  new MyEntityNotFoundException(id);
+        } else {
+            personRepository.deleteById(id);
+            person.get().add(linkTo(methodOn(ItemController.class).getPeople()).withRel("get_people").withType("GET"));
+            return ResponseEntity.ok().body(person.get());
+        }
     }
 }

@@ -1,38 +1,39 @@
 package by.alina.SpringBootDB.service;
 
-import by.alina.SpringBootDB.dao.PersonDAO;
 import by.alina.SpringBootDB.model.Person;
+import by.alina.SpringBootDB.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PersonService {
-    private final PersonDAO personDAO;
+    private final PersonRepository personRepository;
 
     @Autowired
-    public PersonService(PersonDAO personDAO) {
-        this.personDAO = personDAO;
+    public PersonService(PersonRepository personRepository) {
+        this.personRepository = personRepository;
     }
 
-    public Person getPerson(int id){
-        return personDAO.getPerson(id);
+    public Optional<Person> getPerson(Long id){
+        return personRepository.findById(id);
     }
 
     public List<Person> getPeople(){
-        return personDAO.getPeople();
+        return (List<Person>) personRepository.findAll();
     }
 
     public Person addPerson(Person person){
-        return personDAO.addPerson(person);
+        return personRepository.save(person);
     }
 
-    public int updatePerson(int id, Person person){
-        return personDAO.updatePerson(id, person);
+    public Person updatePerson(Person person){
+        return personRepository.save(person);
     }
 
-    public int deletePerson(int id){
-        return personDAO.deletePerson(id);
+    public void deletePerson(Long id){
+        personRepository.deleteById(id);
     }
 }
