@@ -1,31 +1,12 @@
-package by.alina.SpringBootDB.model;
+package by.alina.SpringBootDB.dtos;
 
 import org.springframework.hateoas.RepresentationModel;
 
-import javax.persistence.*;
+public class PersonDTO extends RepresentationModel<PersonDTO> {
 
-@Entity
-@Table(name = "PERSON")
-public class Person extends RepresentationModel<Person> {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
-
-    @Column(name = "name", nullable = false)
     private String name;
-
-    @Column(name = "age", nullable = false)
     private int age;
-
-    public Person(Long id, String name, int age) {
-        this.id = id;
-        this.name = name;
-        this.age = age;
-    }
-
-    private Person(){}
 
     public Long getId() {
         return id;
@@ -49,5 +30,8 @@ public class Person extends RepresentationModel<Person> {
 
     public void setAge(int age) {
         this.age = age;
+    }
+
+    public PersonDTO(Long id, String name, int age) {
     }
 }
