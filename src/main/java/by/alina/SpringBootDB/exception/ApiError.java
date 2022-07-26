@@ -1,4 +1,4 @@
-package by.alina.SpringBootDB.exceptions;
+package by.alina.SpringBootDB.exception;
 
 public class ApiError {
     private String message;

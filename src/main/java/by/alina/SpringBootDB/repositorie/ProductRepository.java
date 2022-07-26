@@ -1,6 +1,6 @@
-package by.alina.SpringBootDB.repositories;
+package by.alina.SpringBootDB.repositorie;
 
-import by.alina.SpringBootDB.models.Product;
+import by.alina.SpringBootDB.model.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

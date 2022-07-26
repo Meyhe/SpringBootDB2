@@ -1,4 +1,4 @@
-package by.alina.SpringBootDB.dtos;
+package by.alina.SpringBootDB.dto;
 
 import org.springframework.hateoas.RepresentationModel;
 

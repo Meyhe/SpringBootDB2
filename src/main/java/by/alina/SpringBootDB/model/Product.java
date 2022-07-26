@@ -1,6 +1,4 @@
-package by.alina.SpringBootDB.models;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
+package by.alina.SpringBootDB.model;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -21,9 +19,9 @@ public class Product{
     @Column(name = "price")
     int price;
 
-    @ManyToMany(mappedBy = "productList")
-    @JsonIgnore
-    private List<Person> people = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(name = "person_id")
+    private Person person;
 
     public Product(){}
 
@@ -57,13 +55,12 @@ public class Product{
         this.price = price;
     }
 
-    public List<Person> getPeople() {
-        return people;
+    public Person getPerson() {
+        return person;
     }
 
-    public void setPeople(List<Person> people) {
-        this.people = people;
+    public void setPerson(Person person) {
+        this.person = person;
     }
-
 }
 

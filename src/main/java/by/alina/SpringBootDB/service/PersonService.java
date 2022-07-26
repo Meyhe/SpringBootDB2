@@ -1,9 +1,9 @@
-package by.alina.SpringBootDB.services;
+package by.alina.SpringBootDB.service;
 
-import by.alina.SpringBootDB.assemblers.ProductAssembler;
-import by.alina.SpringBootDB.exceptions.MyEntityNotFoundException;
-import by.alina.SpringBootDB.models.Person;
-import by.alina.SpringBootDB.repositories.PersonRepository;
+import by.alina.SpringBootDB.assembler.ProductAssembler;
+import by.alina.SpringBootDB.exception.MyEntityNotFoundException;
+import by.alina.SpringBootDB.model.Person;
+import by.alina.SpringBootDB.repositorie.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -1,4 +1,4 @@
-package by.alina.SpringBootDB.exceptions;
+package by.alina.SpringBootDB.exception;
 
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpHeaders;

@@ -1,4 +1,4 @@
-package by.alina.SpringBootDB.models;
+package by.alina.SpringBootDB.model;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -19,15 +19,12 @@ public class Person{
     @Column(name = "age")
     private int age;
 
-    @ManyToMany(cascade = {
+    @OneToMany(cascade = {
                     CascadeType.PERSIST,
-                    CascadeType.MERGE
-            })
+                    CascadeType.MERGE },
+            mappedBy = "person")
 
-    @JoinTable(name = "person_product",
-            joinColumns = @JoinColumn(name = "person_id"),
-            inverseJoinColumns = @JoinColumn(name = "product_id"))
-    private List<Product> productList = new ArrayList<>();
+    private List<Product> productList =new ArrayList<>();
 
     public Person(Long id, String name, int age) {
         this.id = id;
@@ -37,12 +34,12 @@ public class Person{
 
     public void addProduct (Product product){
         this.productList.add(product);
-        product.getPeople().add(this);
+        product.setPerson(this);
     }
 
     public void removeProduct (Product product){
         this.productList.remove(product);
-        product.getPeople().remove(this);
+        product.setPerson(null);
     }
 
     private Person(){}
