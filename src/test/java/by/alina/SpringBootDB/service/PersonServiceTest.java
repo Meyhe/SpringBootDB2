@@ -1,79 +1,118 @@
 package by.alina.SpringBootDB.service;
 
+import by.alina.SpringBootDB.assembler.ProductAssembler;
 import by.alina.SpringBootDB.model.Person;
+import by.alina.SpringBootDB.repositorie.PersonRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import java.util.ArrayList;
+
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class PersonServiceTest {
 
-    @Mock
+    @InjectMocks
     private PersonService personService;
 
-//    данную конструкцию видела в одном из примеров
-//    Для чего это?
-//    -------
-//    @Autowired
-//    @InjectMocks
-//    private PersonService personService;
+    @Mock
+    private PersonRepository personRepository;
 
-    private Person person1;
-    private Person person2;
+    //вроде как работает и без этого, но я уверена, что опять что-то косанула
+    @Mock
+    private ProductAssembler productAssembler;
 
-    List<Person> personList;
+    private Person person;
+    private List<Person> personList;
 
     @BeforeEach
     public void setUp(){
-        personList = new ArrayList<>();
-
-        person1 = new Person(100L, "Alla", 86);
-        person2 = new Person(101L, "Peter", 18);
-
-        personList.add(person1);
-        personList.add(person2);
+        person = new Person(1L, "Voldi", 105);
     }
 
     @AfterEach
     public void tearDown(){
-        person1 = null;
-        person2 = null;
+        person = null;
         personList = null;
     }
 
     @Test
-    public void whenSavePerson_shouldReturnPerson(){
-        when(personService.addPerson(person1)).thenReturn(person1);
-        assertEquals(person1, personService.addPerson(person1));
-        verify(personService,times(1)).addPerson(person1);
+    public void whenGetAllPerson_thenReturnAllPerson(){
+        //given
+        personList = Arrays.asList(person);
+        when(personRepository.findAll()).thenReturn(personList);
+
+        //when
+        List<Person> actualPersonList = personService.getPeople();
+
+        //then
+        assertEquals(personList, actualPersonList);
+        verify(personRepository,times(1)).findAll();
     }
 
     @Test
-    public void whenGetAllPerson_shouldReturnAllPerson(){
+    public void whenGetPeopleById_thenReturnPersonOfThatId(){
+        //given
+        when(personRepository.findById(person.getId())).thenReturn(Optional.of(person));
 
-        when(personService.getPeople()).thenReturn(personList);
-        assertEquals(personList, personService.getPeople());
-        verify(personService,times(1)).getPeople();
+        //when
+        Person actualPerson = personService.getPerson(person.getId());
+
+        //then
+        assertEquals(person, actualPerson);
+        verify(personRepository, times(1)).findById(person.getId());
     }
 
     @Test
-    public void whenGetPersonById_shouldReturnPersonOfThatId(){
-        when(personService.getPerson(person1.getId())).thenReturn(person1);
-        assertEquals(person1, personService.getPerson(person1.getId()));
-        //assertThat(personService.getPerson(person1.getId())).isEqualTo(person1);
+    public void whenSavePerson_thenReturnPerson(){
+        //given
+        when(personRepository.save(person)).thenReturn(person);
+
+        //when
+        Person actualPerson = personService.addPerson(person);
+
+        //then
+        assertEquals(person, actualPerson);
+        verify(personRepository,times(1)).save(person);
+    }
+
+    //в этом тесте я не уверена
+    @Test
+    public void whenUpdatePerson_thenReturnUpdatePerson(){
+        //given
+        Long id = 1L;
+        when(personRepository.findById(id)).thenReturn(Optional.of(person));
+        when(personRepository.save(person)).thenReturn(person);
+        person.setName("Harry");
+        person.setAge(67);
+
+        //when
+        Person getPerson = personService.getPerson(id);
+        Person upPerson = personService.updatePerson(getPerson, id);
+
+        //then
+        assertEquals("Harry", upPerson.getName());
+        assertEquals(67, upPerson.getAge());
     }
 
     @Test
-    public void whenDeleteById_shouldDeleteThePerson(){
-        doNothing().when(personService).deletePerson(person1.getId());
-        personService.deletePerson(person1.getId());
-        verify(personService,times(1)).deletePerson(person1.getId());
+    public void whenDeletePersonById_thenDeletePerson(){
+        //given
+        doNothing().when(personRepository).deleteById(person.getId());
+
+        //when
+        personService.deletePerson(person.getId());
+
+        //then
+        verify(personRepository,times(1)).deleteById(person.getId());
     }
 }
