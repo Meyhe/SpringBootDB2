@@ -92,16 +92,18 @@ public class PersonServiceTest {
         Long id = 1L;
         when(personRepository.findById(id)).thenReturn(Optional.of(person));
         when(personRepository.save(person)).thenReturn(person);
-        person.setName("Harry");
-        person.setAge(67);
 
         //when
         Person getPerson = personService.getPerson(id);
+        getPerson.setName("Harry");
+        getPerson.setAge(67);
+
         Person upPerson = personService.updatePerson(getPerson, id);
 
         //then
         assertEquals("Harry", upPerson.getName());
         assertEquals(67, upPerson.getAge());
+        assertEquals(1, upPerson.getId());
     }
 
     @Test
