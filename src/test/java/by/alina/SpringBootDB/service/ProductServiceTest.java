@@ -1,6 +1,5 @@
 package by.alina.SpringBootDB.service;
 
-import by.alina.SpringBootDB.model.Person;
 import by.alina.SpringBootDB.model.Product;
 import by.alina.SpringBootDB.repositorie.ProductRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -88,16 +87,18 @@ class ProductServiceTest {
         Long id = 1L;
         when(productRepository.findById(id)).thenReturn(Optional.of(product));
         when(productRepository.save(product)).thenReturn(product);
-        product.setName("Moloko");
-        product.setPrice(3);
 
         //when
         Product getProduct = productService.getProduct(id);
+        getProduct.setName("Moloko");
+        getProduct.setPrice(3);
+
         Product upProduct = productService.updateProduct(getProduct, id);
 
         //then
         assertEquals("Moloko", upProduct.getName());
         assertEquals(3, upProduct.getPrice());
+        assertEquals(1, upProduct.getId());
     }
 
     @Test
